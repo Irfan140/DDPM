@@ -8,7 +8,7 @@ From the repository root, install the project dependencies and start the API:
 
 ```bash
 uv sync
-uv run uvicorn ddpm_api.main:app --reload
+uv run uvicorn src.main:app --reload
 ```
 
 The checkpoint is loaded at startup. To use another checkpoint, set `DDPM_WEIGHTS` to its path. Set `DDPM_DEVICE` to `cpu`, `cuda`, or `auto` (the default).
@@ -16,7 +16,7 @@ The checkpoint is loaded at startup. To use another checkpoint, set `DDPM_WEIGHT
 ```powershell
 $env:DDPM_WEIGHTS = "C:\path\to\checkpoint.pth"
 $env:DDPM_DEVICE = "auto"
-uv run uvicorn ddpm_api.main:app --reload
+uv run uvicorn src.main:app --reload
 ```
 
 Interactive API documentation is available at `http://127.0.0.1:8000/docs`; health status is at `/health`.
@@ -38,8 +38,8 @@ This is an unconditional model: requests cannot specify a Fashion-MNIST class. S
 
 ## Modules
 
-- `ddpm_api/model.py`: training-compatible U-Net architecture
-- `ddpm_api/sampling.py`: reverse DDPM sampler
-- `ddpm_api/service.py`: checkpoint loading and PNG encoding
-- `ddpm_api/schemas.py`: request and response models
-- `ddpm_api/main.py`: FastAPI app and routes
+- `src/model.py`: training-compatible U-Net architecture
+- `src/sampling.py`: reverse DDPM sampler
+- `src/service.py`: checkpoint loading and PNG encoding
+- `src/schemas.py`: request and response models
+- `src/main.py`: FastAPI app and routes
