@@ -3,13 +3,21 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(PROJECT_ROOT / ".env")
 WEIGHTS_PATH = Path(os.getenv("DDPM_WEIGHTS", PROJECT_ROOT / "ddpm_fashion_mnist.pth"))
 DEVICE_SETTING = os.getenv("DDPM_DEVICE", "auto").lower()
 TIMESTEPS = 1500
 IMAGE_SIZE = 28
 BASE_CHANNELS = 64
 MAX_BATCH_SIZE = 8
+
+
+def load_environment() -> None:
+    """Load optional project-local .env values without overriding real environment variables."""
+    load_dotenv(PROJECT_ROOT / ".env", override=False)
 
 
 def resolve_device():

@@ -4,11 +4,14 @@ import argparse
 import os
 from pathlib import Path
 
+from config import load_environment
+
 from .config import TrainingConfig
 from .engine import train
 
 
 def build_parser() -> argparse.ArgumentParser:
+    load_environment()
     parser = argparse.ArgumentParser(description="Train the Fashion-MNIST DDPM.")
     parser.add_argument("--data-dir", type=Path, default=Path(os.getenv("DDPM_DATA_DIR", "./data")))
     parser.add_argument(
@@ -22,6 +25,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--timesteps", type=int, default=1500)
     parser.add_argument("--base-channels", type=int, default=64)
     parser.add_argument("--num-workers", type=int, default=2)
+    parser.add_argument(
+        "--mixed-precision",
+        choices=("no", "fp16", "bf16"),
+        default=os.getenv("DDPM_MIXED_PRECISION", "no"),
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--download", action="store_true", help="Download Fashion-MNIST if it is not mounted locally.")
     parser.add_argument("--wandb-project", default=os.getenv("WANDB_PROJECT", "fashion-mnist-ddpm"))
@@ -42,6 +50,7 @@ def main() -> None:
         timesteps=args.timesteps,
         base_channels=args.base_channels,
         num_workers=args.num_workers,
+        mixed_precision=args.mixed_precision,
         seed=args.seed,
         download=args.download,
         wandb_project=args.wandb_project,

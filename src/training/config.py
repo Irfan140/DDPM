@@ -17,6 +17,7 @@ class TrainingConfig:
     num_workers: int = 2
     seed: int = 42
     download: bool = False
+    mixed_precision: str = "no"
     wandb_project: str = "fashion-mnist-ddpm"
     wandb_entity: str | None = None
     run_name: str | None = None

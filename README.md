@@ -13,9 +13,9 @@ src/
   model.py      Shared DDPM U-Net
 ```
 
-The API retains `GET /health` and `POST /generate`. The generation request accepts `num_samples` (1–8) and an optional `seed`; each returned image is a base64-encoded PNG.
+The API retains `GET /health` and `POST /generate`. The generation request accepts `num_samples` (1-8) and an optional `seed`; each returned image is a base64-encoded PNG.
 
-## Train on Kaggle
+## Train on Kaggle with Accelerate
 
 Create a Kaggle Notebook with a GPU accelerator. Attach a Fashion-MNIST dataset that contains either the CSV file `fashion-mnist_train.csv` (785 columns: label plus 784 pixels) or torchvision's FashionMNIST files. Kaggle commonly mounts attached datasets under `/kaggle/input/<dataset-folder>`.
 
@@ -28,20 +28,32 @@ import os
 os.environ["WANDB_API_KEY"] = UserSecretsClient().get_secret("WANDB_API_KEY")
 ```
 
-Then clone and install the project, and train using the mounted dataset:
+Then clone and install the project, and launch training through Accelerate:
 
 ```bash
 !git clone https://github.com/Irfan140/DDPM.git
 %cd DDPM
 !pip install -e .
-!ddpm-train --data-dir /kaggle/input/fashion-mnist \
+!accelerate launch --num_processes 1 -m training.cli \
+    --data-dir /kaggle/input/fashion-mnist \
     --checkpoint /kaggle/working/ddpm_fashion_mnist.pth \
-    --epochs 20 --batch-size 128 --wandb-project fashion-mnist-ddpm
+    --epochs 20 --batch-size 128 --mixed-precision fp16 \
+    --wandb-project fashion-mnist-ddpm
 ```
 
-The CSV loader searches recursively below `--data-dir`, so use the attached dataset's actual folder name if it differs from `fashion-mnist`. Set `WANDB_ENTITY` or pass `--wandb-entity` when logging to a W&B team. Training logs epoch loss and uploads the final checkpoint as a W&B model artifact. Checkpoints are written after each epoch, with the best training-loss checkpoint saved as `best_ddpm_fashion_mnist.pth` alongside it.
+For a two-GPU runtime, change the launch options to `--multi_gpu --num_processes 2`. Accelerate prepares and shards the dataloader, wraps the model and optimizer, and synchronizes distributed gradients. The CSV loader searches recursively below `--data-dir`, so use the attached dataset's actual folder name if it differs from `fashion-mnist`.
 
-For a local run, install with `uv sync` and use `uv run ddpm-train --data-dir ./data --download`. W&B tracking is enabled by default; authenticate with `wandb login` or `WANDB_API_KEY`. Use `--no-wandb` for an offline run.
+Training logs epoch loss to W&B and uploads the final checkpoint as a model artifact. Checkpoints are written after each epoch, with the best training-loss checkpoint saved as `best_ddpm_fashion_mnist.pth` alongside it.
+
+## Local training
+
+Copy `.env.example` to `.env` and set `WANDB_API_KEY`. The `.env` file is loaded by the API and training CLI and is ignored by Git. Install dependencies with `uv sync`. Run `uv run accelerate config` once, then launch one or multiple processes:
+
+```bash
+uv run accelerate launch --num_processes 1 -m training.cli --data-dir ./data --download
+```
+
+For two GPUs, use `uv run accelerate launch --multi_gpu --num_processes 2 -m training.cli ...`. W&B tracking is enabled by default; use `--no-wandb` for an offline run. Set `WANDB_ENTITY` or pass `--wandb-entity` to log to a W&B team.
 
 ## Run inference
 
