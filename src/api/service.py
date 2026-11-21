@@ -8,10 +8,10 @@ import threading
 import torch
 from PIL import Image
 
-from ddpm.config import BASE_CHANNELS, IMAGE_SIZE, TIMESTEPS, WEIGHTS_PATH, resolve_device
-from ddpm.diffusion import sample
-from ddpm.model import DDPMUNet
-from ddpm.training.checkpoint import load_model_state
+from config import BASE_CHANNELS, IMAGE_SIZE, TIMESTEPS, WEIGHTS_PATH, resolve_device
+from diffusion import sample
+from model import DDPMUNet
+from training.checkpoint import load_model_state
 
 
 class InferenceService:

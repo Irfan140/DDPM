@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 WEIGHTS_PATH = Path(os.getenv("DDPM_WEIGHTS", PROJECT_ROOT / "ddpm_fashion_mnist.pth"))
 DEVICE_SETTING = os.getenv("DDPM_DEVICE", "auto").lower()
 TIMESTEPS = 1500

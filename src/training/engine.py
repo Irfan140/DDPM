@@ -6,8 +6,8 @@ import torch
 import wandb
 from torch.utils.data import DataLoader
 
-from ddpm.diffusion import DiffusionSchedule
-from ddpm.model import DDPMUNet
+from diffusion import DiffusionSchedule
+from model import DDPMUNet
 from .checkpoint import save_checkpoint
 from .config import TrainingConfig
 from .data import build_training_dataset

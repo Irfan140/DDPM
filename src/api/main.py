@@ -4,8 +4,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
 
-from ddpm.api.schemas import GenerateRequest, GenerateResponse, GeneratedImage
-from ddpm.api.service import InferenceService
+from api.schemas import GenerateRequest, GenerateResponse, GeneratedImage
+from api.service import InferenceService
 
 
 @asynccontextmanager

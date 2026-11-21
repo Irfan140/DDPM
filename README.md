@@ -5,9 +5,10 @@ A modular PyTorch project for training an unconditional Fashion-MNIST DDPM, trac
 ## Project structure
 
 ```text
-src/ddpm/
+src/
   api/          FastAPI routes, schemas, and inference service
   training/     CLI, configuration, dataset loading, checkpoints, and training loop
+  config.py     Shared model and inference configuration
   diffusion.py  Shared forward/reverse diffusion implementation
   model.py      Shared DDPM U-Net
 ```
@@ -49,7 +50,7 @@ Point the API at the trained checkpoint. In Kaggle, download `/kaggle/working/dd
 ```powershell
 $env:DDPM_WEIGHTS = "C:\path\to\ddpm_fashion_mnist.pth"
 uv sync
-uv run uvicorn ddpm.api.main:app --host 0.0.0.0 --port 8000
+uv run uvicorn api.main:app --host 0.0.0.0 --port 8000
 ```
 
 If no `DDPM_WEIGHTS` is set, the API looks for `ddpm_fashion_mnist.pth` at the repository root. Open `http://127.0.0.1:8000/docs` for interactive API documentation. Generation uses the timestep count saved in the checkpoint (or 1,500 for the original notebook weights).
