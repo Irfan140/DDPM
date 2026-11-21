@@ -1,4 +1,4 @@
-"""Request and response schemas for the HTTP API."""
+"""Request and response schemas for the inference API."""
 
 from pydantic import BaseModel, Field
 
@@ -17,4 +17,4 @@ class GenerateResponse(BaseModel):
     images: list[GeneratedImage]
     num_samples: int
     image_size: int = 28
-    seed: int | None
+    seed: int

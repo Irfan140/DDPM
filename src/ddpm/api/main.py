@@ -4,8 +4,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
 
-from .schemas import GenerateRequest, GenerateResponse, GeneratedImage
-from .service import InferenceService
+from ddpm.api.schemas import GenerateRequest, GenerateResponse, GeneratedImage
+from ddpm.api.service import InferenceService
 
 
 @asynccontextmanager
@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Fashion-MNIST DDPM API",
-    description="Generate 28×28 Fashion-MNIST-like images from a trained DDPM checkpoint.",
+    description="Generate 28x28 Fashion-MNIST-like images from a trained DDPM checkpoint.",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -39,9 +39,10 @@ def generate(payload: GenerateRequest, request: Request):
     try:
         images, seed = service.generate(payload.num_samples, payload.seed)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Image generation failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail="Image generation failed.") from exc
     return GenerateResponse(
         images=[GeneratedImage(data=image) for image in images],
         num_samples=len(images),
         seed=seed,
+        image_size=service.image_size,
     )

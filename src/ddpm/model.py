@@ -1,4 +1,4 @@
-"""The DDPM U-Net architecture used to train the supplied checkpoint."""
+"""The DDPM U-Net architecture used by training and inference."""
 
 import math
 
